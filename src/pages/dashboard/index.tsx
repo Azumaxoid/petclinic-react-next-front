@@ -4,11 +4,11 @@ import Paper from '@mui/material/Paper';
 import TodayVeterinarians from "../../organisms/TodayVeterinarians";
 import TodayVisits from "../../organisms/TodayVisits";
 import TodayVisitStats from "../../organisms/TodayVisitStats";
+export {getServerSideProps}from "../../utils/newrelic"
 
 function DashboardContent() {
 
     return (
-
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
                 {/* Chart */}
@@ -28,6 +28,10 @@ function DashboardContent() {
     );
 }
 
-export default function Dashboard() {
-    return <DashboardContent />;
+export default function Dashboard({browserTimingHeader}:{browserTimingHeader: string}) {
+    return (
+        <>
+            <div dangerouslySetInnerHTML={{__html: browserTimingHeader}}/>
+        <DashboardContent />
+        </>)
 }

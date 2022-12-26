@@ -56,7 +56,7 @@ const OwnerDetail: React.FC<OwnerDetailProps> = ({ownerId}) => {
         API.post(`/owners/${ownerId}/edit`, tmpOwner).then((data) => {
             setSavedTimestamp(new Date().getTime())
         })
-    }, [owner]))
+    }, [owner, ownerId]))
 
     return (
         <React.Fragment>

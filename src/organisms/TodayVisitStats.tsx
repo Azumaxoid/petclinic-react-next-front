@@ -27,7 +27,7 @@ export default function TodayVisitStats() {
             })
         }, 1000)
         setTimer(newTimer)
-    }, [])
+    }, [timer])
 
     return (
         <NormalCard title={'今日の来訪者'}>

@@ -24,16 +24,18 @@ const VisitInput: React.FC<VisitInputProps> = ({ownerId, petId}) => {
     const visitInputField = ():InputField[] => ([
         { type: 'date', propName: 'date', label: '訪問日', value: dayjs(new Date()).format('YYYY-MM-DD'), required: true},
         { type: 'text', propName: 'description', label: '訪問理由', value: '', required: true},
+        { type: 'image', propName: 'images', label: '訪問理由', value: '', required: true},
     ])
 
     const setInputFieldToVisit = (visit: Visit, fields:InputField[]) => {
         visit.date = getFieldByPropName(fields, 'date')?.value;
         visit.description = getFieldByPropName(fields, 'description')?.value;
+        visit.images = [{image: getFieldByPropName(fields, 'images')?.value}];
     }
 
     useEffect(()=>{
         setFields(visitInputField())
-    }, [])
+    }, [setFields])
 
     useEffect(()=>{
         if (ownerId < 0  || petId < 0 ) {
@@ -59,7 +61,7 @@ const VisitInput: React.FC<VisitInputProps> = ({ownerId, petId}) => {
         API.post(`/owners/${pet.owner.id}/pets/${pet.id}/visits/new`, tmpVisit).then(() => {
             setSavedTimestamp(new Date().getTime())
         })
-    }, [pet, setFields]))
+    }, [pet]))
 
     return (
         <React.Fragment>

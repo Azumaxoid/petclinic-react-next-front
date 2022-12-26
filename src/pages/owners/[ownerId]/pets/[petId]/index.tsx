@@ -21,11 +21,11 @@ export default function PetDetailPage() {
                 setPetId(petId)
             }
         }
-    }, [router.isReady, router.query, router.query?.ownerId, router.query?.petId])
+    }, [router, router.isReady, router.query, router.query?.ownerId, router.query?.petId])
 
     const handleSelectPet = useCallback((ownerId: number, petId: number) => {
         router.push({ pathname: `/owners/${ownerId}/pets/${petId}` })
-    }, [])
+    }, [router])
 
     return (
         <Container maxWidth="lg" sx={{mt: 4, mb: 4}}>

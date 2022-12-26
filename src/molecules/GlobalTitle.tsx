@@ -18,7 +18,7 @@ export const GlobalTitle = () => {
                 spacing={2}
             >
                 <Image height={64} src={SpringLogo} alt={""}/>
-                <Image height={64} src={PetClinicImage} alt={""} className={'petClinic'}/>
+                <Image height={64} src={PetClinicImage} alt={""} className={'petClinic'} unoptimized={true} />
                 <Image height={64} src={ReactLogo} alt={""} className={'App-logo'}/>
             </Stack>
         </Typography>

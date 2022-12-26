@@ -21,7 +21,7 @@ export const Users: React.FC<UsersProps> = ({ onSelectUser }) => {
       )
         setCustomAttribute('userId', userId)
         onSelectUser(userId)
-    }, [])
+    }, [onSelectUser])
 
     const userToTableCardRow = (user: User) => ({
         id: user.userId,

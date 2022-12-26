@@ -1,4 +1,6 @@
 // テーブル行
+import {PerformanceEntry} from "perf_hooks";
+
 export type TableCardRow = {
     id: any
     cols: any[]
@@ -7,7 +9,7 @@ export type TableCardRow = {
 
 // 入力フィールド
 export type InputField = {
-    type: 'text' | 'number' | 'date' | 'select'
+    type: 'text' | 'number' | 'date' | 'select' | 'image'
     propName: string
     label: string
     value: any
@@ -44,9 +46,15 @@ export type Visit = {
     description?: string
     visitedTimestamp?: number
     pet?: Pet
+    images?: VisitImage[]
     new: boolean
 }
 
+// 訪問画像タイプ
+export type VisitImage = {
+    id?: number
+    image?: any
+}
 // ペットタイプ
 export type Pet = {
     id: number

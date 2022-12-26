@@ -16,11 +16,11 @@ export default function Owners() {
                 setPage(page)
             }
         }
-    }, [router.query, router.query?.page, setPage])
+    }, [router, router.query, router.query?.page, setPage])
 
     const handleSelectOwner = useCallback((ownerId: number) => {
         router.push({ pathname: `/owners/${ownerId}` })
-    }, [])
+    }, [router])
 
     return (
         <Container maxWidth="lg" sx={{mt: 4, mb: 4}}>

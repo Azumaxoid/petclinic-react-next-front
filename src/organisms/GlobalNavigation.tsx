@@ -16,7 +16,11 @@ import {GlobalTitle} from "../molecules/GlobalTitle";
 import {Drawer} from "../molecules/Drawer";
 import Link from "next/link";
 import {LinkMenuItem} from "../molecules/LinkMenuItem";
-import {setCustomAttribute} from "../utils/newrelic-browser";
+import * as newrelic from "../utils/newrelic-browser";
+import logger from "../logs/logger"
+
+import PetClinicTracer from "../tracers/PetClinicTracer"
+import { context, trace, Tracer, Span, Exception, SpanStatusCode } from '@opentelemetry/api'
 
 export const GlobalNavigation = () => {
 
@@ -26,8 +30,69 @@ export const GlobalNavigation = () => {
     };
 
     useEffect(()=>{
+        const span = PetClinicTracer.getTracer().startSpan('Start!!', {startTime: new Date().getTime()})
+        context.with(trace.setSpan(context.active(), span), ()=>{
+            const span2 = PetClinicTracer.getTracer().startSpan('test2', {startTime: new Date().getTime()})
+            try {
+                throw new Error('TestError')
+            } catch (e) {
+                if (typeof e === 'string') {
+                    span2.setStatus({code: SpanStatusCode.ERROR, message: e})
+                } else {
+                    const err = e as Error
+                    span2.setStatus({code: SpanStatusCode.ERROR, message: (err.message + '\n' + err.stack)})
+                }
+            }
+            span2.end(new Date().getTime())
+        })
+        span.end(new Date().getTime())
+        new PerformanceObserver((entryList) => {
+            for (const entry of entryList.getEntries()) {
+                // @ts-ignore
+                const lcp = entry as any
+                logger.log({ level: "info", message: `LCP candidate : ${lcp.url}`});
+                newrelic.addPageAction('LCPCandidate', {
+                    startTime: lcp.startTime,
+                    loadTime: lcp.loadTime,
+                    duration: lcp.duration,
+                    renderTime: lcp.renderTime,
+                    size: lcp.size,
+                    resourceUrl: lcp.url,
+                    element: lcp.element?.innerText.substring(0, 50)
+                })
+
+            }
+        }).observe({type: 'largest-contentful-paint', buffered: true});
+        setTimeout(()=> {
+            new PerformanceObserver((entryList) => {
+                let worstElement: any = null
+                for (const entry of entryList.getEntries()) {
+                    let cls = entry as any
+                    if (!worstElement || worstElement.value < cls.value) {
+                        worstElement = cls
+                    }
+                }
+                if (!!worstElement && worstElement.value > 0.001) {
+                    // @ts-ignore
+                    const souceCount = worstElement.sources?.length ?? 0
+                    const clsEvent = {
+                        startTime: worstElement.startTime,
+                        lastInputTime: worstElement.lastInputTime,
+                        value: worstElement.value,
+                        source1Tag: souceCount > 0 ? worstElement.sources[0].node?.tagName : '',
+                        source1ClassName: souceCount > 0 ? worstElement.sources[0].node?.className : '',
+                        source1InnerText50: souceCount > 0 ? worstElement.sources[0].node?.innerText?.substring(0, 50) : '',
+                        source2Tag: souceCount > 1 ? worstElement.sources[1].node?.tagName : '',
+                        source2ClassName: souceCount > 1 ? worstElement.sources[1].node?.className : '',
+                        source2InnerText50: souceCount > 1 ? worstElement.sources[1].node?.innerText?.substring(0, 50) : '',
+                    }
+                    logger.log({ level: "info", message: `CLS candidate : ${JSON.stringify(clsEvent)}`});
+                    newrelic.addPageAction('CLSCandidate', clsEvent)
+                }
+            }).observe({type: 'layout-shift', buffered: true});
+        }, 2000)
         const cookies = parseCookies()
-        setCustomAttribute('userId', cookies.userId || -1)
+        newrelic.setCustomAttribute('userId', cookies.userId || -1)
     }, [])
     return (<>
         <AppBar position="absolute" open={open}>

@@ -6,10 +6,11 @@ interface NormalCardProps {
     children: React.ReactNode
     title: string
     heightFixed?: boolean
+    height?: string
 }
 export const NormalCard: React.FC<NormalCardProps> = ({
     children,
-    title,heightFixed = true}) => {
+    title,heightFixed = true, height}) => {
 
     return (
         <Paper
@@ -17,7 +18,7 @@ export const NormalCard: React.FC<NormalCardProps> = ({
                 p: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                height: heightFixed ? '240px' : 'inherit',
+                height: heightFixed ? '240px' : height ? height : 'inherit',
             }}
         >
             <Title>{title}</Title>

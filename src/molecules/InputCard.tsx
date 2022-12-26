@@ -11,6 +11,8 @@ import {useCallback, useEffect, useState} from "react";
 import debounce from "@mui/utils/debounce";
 import Button from "@mui/material/Button";
 import MenuItem from '@mui/material/MenuItem';
+import Image from "next/image";
+import {UploadButton} from "./UploadButton";
 
 interface InputCardProps {
     title: string
@@ -33,11 +35,19 @@ export const InputCard: React.FC<InputCardProps> = ({
         const newFields = JSON.parse(JSON.stringify(privateFields)) as InputField[]
         const field = newFields.find(field => field.propName === propName)
         if (!field) {
-          return
+            return
         }
         field.value = value
         setPrivateFields(newFields)
-    }, [privateFields]))
+    }, [privateFields, setPrivateFields]))
+
+    const handleImageLoaded = useCallback((propName: string, value: any)=> {
+        let reader = new FileReader()
+        reader.readAsDataURL(value)
+        reader.onload = () => {
+            handleChange(propName, reader.result)
+        }
+    }, [privateFields, setPrivateFields, handleChange])
 
     const renderField = (field: InputField) => {
         return field.type === 'text' ?
@@ -81,13 +91,19 @@ export const InputCard: React.FC<InputCardProps> = ({
                             onChange={(event) => handleChange(field.propName, event.target.value)}
                         >
                             {field.options?.map(option => <MenuItem key={`input-option-${option.id}`} value={option.id}>{option.name}</MenuItem>)}
-                            </TextField>
-                        : <></>
+                        </TextField>
+                        : field.type === 'image' ?
+                            <>
+                            <UploadButton name={field.label} onChange={(event) => handleImageLoaded(field.propName, event.target.files[0])}
+                            />
+                                <Image src={field.value} width={300} alt={""} />
+                            </>
+                            : <></>
     }
 
     const handleSave = useCallback(() => {
         onSave(privateFields)
-    }, [privateFields])
+    }, [onSave, privateFields])
 
     return (
         <Paper
@@ -99,7 +115,7 @@ export const InputCard: React.FC<InputCardProps> = ({
             }}
         >
             <Title>{title}</Title>
-            {fields.map(field => renderField(field))}
+            {privateFields.map(field => renderField(field))}
             <Button variant="contained" onClick={handleSave}>保存</Button>
         </Paper>
     );

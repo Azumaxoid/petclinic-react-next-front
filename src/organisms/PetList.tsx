@@ -17,35 +17,36 @@ const PetList: React.FC<PetListProps> = ({ownerId, onSelectPet}) => {
     const [owner, setOwner] = useState<Owner>()
     const [rows, setRows] = useState<TableCardRow[]>([])
 
-    const editButton = (id: number) => (
-        <Button onClick={()=>onEdit(id)}>編集</Button>
-    )
+    const onEdit = useCallback((id: number)=> {
+        onSelectPet(id)
+    }, [onSelectPet])
 
-    const petToTableCardRow = (pet: Pet) => ({
-        id: pet.id,
-        cols: [
-            pet.name,
-            dayjs(pet.birthDate).format('YYYY-MM-DD'),
-            pet.type.name,
-            editButton(pet.id),
-        ],
-        item: owner,
-    })
     useEffect(()=>{
         if (ownerId < 0) {
             return
         }
+
+        const editButton = (id: number) => (
+            <Button onClick={()=>onEdit(id)}>編集</Button>
+        )
+
+        const petToTableCardRow = (pet: Pet) => ({
+            id: pet.id,
+            cols: [
+                pet.name,
+                dayjs(pet.birthDate).format('YYYY-MM-DD'),
+                pet.type.name,
+                editButton(pet.id),
+            ],
+            item: pet,
+        })
         API.get(`/owners/${ownerId}`).then((data) => {
             const owner = data as Owner
             const newRows = owner.pets?.map(petToTableCardRow) || []
             setOwner(owner)
             setRows(newRows)
         })
-    }, [ownerId])
-
-    const onEdit = useCallback((id: number)=> {
-        onSelectPet(id)
-    }, [onSelectPet])
+    }, [ownerId, onEdit])
 
     return (
         <TableCard

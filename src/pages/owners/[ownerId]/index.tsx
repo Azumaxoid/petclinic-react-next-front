@@ -4,8 +4,9 @@ import {useRouter} from "next/router";
 import {useCallback, useEffect, useState} from "react";
 import OwnerDetail from "../../../organisms/OwnerDetail";
 import PetList from "../../../organisms/PetList";
+export {getServerSideProps}from "../../../utils/newrelic"
 
-export default function OwnerDetailPage() {
+export default function OwnerDetailPage({browserTimingHeader}:{browserTimingHeader: string}) {
     const router = useRouter();
 
     const [ownerId, setOwnerId] = useState<number>(-1)
@@ -17,14 +18,15 @@ export default function OwnerDetailPage() {
                 setOwnerId(ownerId)
             }
         }
-    }, [router.isReady, router.query, router.query?.ownerId, setOwnerId])
+    }, [router, router.isReady, router.query, router.query?.ownerId, setOwnerId])
 
     const handleSelectPet = useCallback((petId: number) => {
         router.push({ pathname: `/owners/${ownerId}/pets/${petId}` })
-    }, [ownerId])
+    }, [ownerId, router])
 
     return (
         <Container maxWidth="lg" sx={{mt: 4, mb: 4}}>
+            <div dangerouslySetInnerHTML={{__html: browserTimingHeader}}/>
             <Grid container spacing={3}>
                 <Grid item xs={12}>
                     <OwnerDetail ownerId={ownerId}/>

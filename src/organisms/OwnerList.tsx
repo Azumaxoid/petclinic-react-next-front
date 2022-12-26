@@ -39,11 +39,11 @@ const OwnerList: React.FC<OwnerListProps> = ({page, onSelectOwner}) => {
             setRows(newRows)
             setMaxPage(data.totalPages)
         })
-    }, [page])
+    }, [page, ownerToTableCardRow])
 
     const onEdit = useCallback((id: number)=> {
         onSelectOwner(id)
-    }, [rows])
+    }, [rows, onSelectOwner])
 
     return (
         <TableCard

@@ -57,7 +57,7 @@ const PetDetail: React.FC<PetDetailProps> = ({ownerId, petId}) => {
                 setFields(newFields)
             })
         })
-    }, [ownerId, petId, petTypes])
+    }, [petToInputField, ownerId, petId, petTypes])
 
     const onSave = debounce(useCallback((fields: InputField[]) => {
         if (!pet) {
@@ -68,7 +68,7 @@ const PetDetail: React.FC<PetDetailProps> = ({ownerId, petId}) => {
         API.post(`/owners/${ownerId}/pets/${petId}/edit`, tmpPet).then((data) => {
             setSavedTimestamp(new Date().getTime())
         })
-    }, [pet, petTypes]))
+    }, [ownerId, petId, pet, petTypes]))
 
     return (
         <React.Fragment>
