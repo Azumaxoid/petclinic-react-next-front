@@ -50,7 +50,7 @@ export const GlobalNavigation = () => {
             for (const entry of entryList.getEntries()) {
                 // @ts-ignore
                 const lcp = entry as any
-                logger.log({ level: "info", message: `LCP candidate : ${lcp.url}`});
+                logger.info(`LCP candidate : ${lcp.url}`);
                 newrelic.addPageAction('LCPCandidate', {
                     startTime: lcp.startTime,
                     loadTime: lcp.loadTime,
@@ -86,7 +86,7 @@ export const GlobalNavigation = () => {
                         source2ClassName: souceCount > 1 ? worstElement.sources[1].node?.className : '',
                         source2InnerText50: souceCount > 1 ? worstElement.sources[1].node?.innerText?.substring(0, 50) : '',
                     }
-                    logger.log({ level: "info", message: `CLS candidate : ${JSON.stringify(clsEvent)}`});
+                    logger.info(`CLS candidate : ${JSON.stringify(clsEvent)}`);
                     newrelic.addPageAction('CLSCandidate', clsEvent)
                 }
             }).observe({type: 'layout-shift', buffered: true});

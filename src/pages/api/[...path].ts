@@ -22,7 +22,7 @@ export default function handler(
         res.status(500).json({ message: 'No URL' })
         return
     }
-    logger.log({level: 'info', message: `Request to ${req.url}`})
+    logger.info(`Request to ${req.url}`)
     const url = req.url.replace(/\/$/, '')
     if (req.method === 'GET') {
         return API.get(url, {headers: { Cookie: cookieString(req.cookies) }}).then((result) => {

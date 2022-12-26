@@ -1,17 +1,8 @@
-import * as winston from "winston";
+import * as Pino from "pino";
 
-const logger = winston.createLogger({
-            level: "info",
-            format: winston.format.combine(
-                winston.format.timestamp({
-                    format: "YYYY-MM-DD HH:mm:ss"
-                }),
-                winston.format.errors({ stack: true }),
-                winston.format.splat(),
-                winston.format.json()
-            ),
-            defaultMeta: { service: "winston-lambda" },
-            transports: new winston.transports.Console()
-        });
+export const logger = Pino.pino({
+    name: 'app-name',
+    level: 'debug'
+});
 
 export default logger;
